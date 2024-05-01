@@ -1,14 +1,16 @@
 // in the current list , a percentage of blanck holes. 0->none, 100-> all;
 let percentageOfEmpty = 0;
-// the maximum of the multiplication tables : the upper on each axes
-let biggerDigit = 10;
-// max visu : the number of lines on x and y with boxes
+// max visu : the number of lines on x and y with boxes, ie table of multiplication
 let maxLinesWithBox = 10;
-let maxTable = 5;
-// maxLinesWithText : the number of lines on x and Y where text is drawn.
+// maxLinesWithText : the number of lines on x and Y where text is drawn, otherwise empty.
 // maxLinesWithText should be equal or less than maxLinesWithBox to leavec empty boxes
-let maxLinesWithText = 2;
+let maxLinesWithText = 10;
 let nameOfFile;
+//
+let tailleBase = 50;
+let increment = 11.11;
+let tailleMax = 0;
+let steps = [];
 
 function okVisu(kx, ky) {
   return kx + 1 <= maxLinesWithBox || ky + 1 <= maxLinesWithBox;
@@ -19,7 +21,7 @@ function okText(kx, ky) {
 
 let img;
 let crinola = [
-  //"#e6194B",
+  
   "#c70039",
   "#ff5733",
   "#3cb44b",
@@ -31,6 +33,18 @@ let crinola = [
   "#800000",
   "#e6194B",
 ];
+let crinola2 = [
+  "#167288",
+  "#8cdaec",
+  "#fe2757",
+  "#c730c4",
+  "#8b8e0f",
+  "#5a6a8e",
+  "#1c7d49",
+  "#3cb464",
+  "#4b5697",
+  "#112233",
+];
 // position for (0,0)
 let zero_x, zero_y;
 
@@ -38,13 +52,20 @@ function preload() {
   // Charger l'image PNG
   imgSpider = loadImage("../../img/sympaSpider.png");
 }
-let maxX = 1200;
+let maxX = 1400;
 let maxY = 1400;
 
 function setup() {
   createCanvas(maxX, maxY);
   zero_x = 100;
   zero_y = height - 400;
+
+  for (i = 0; i < 10; i++) {
+    let oneStep = tailleBase + i * increment;
+    steps.push(oneStep);
+    print(i, steps);
+    tailleMax = tailleMax + oneStep;
+  }
 }
 
 function drawLegend() {
@@ -62,16 +83,16 @@ function drawLegend() {
   stroke(0);
   strokeWeight(0);
   fill(0);
-  let legend = `BiggerDigit=${biggerDigit}\n`;
+  let legend = ``;
   legend += `maxLinesWithBox=${maxLinesWithBox} , maxLinesWithText=${maxLinesWithText}\n`;
   legend += `randomEmpty=${percentageOfEmpty}%\n`;
   legend += `© pep-inno-2024`;
-  // name of file derived from
-  nameOfFile = `pepinno_UpTo${biggerDigit}_Box${maxLinesWithBox}_Txt${maxLinesWithText}`;
-  if (percentageOfEmpty > 0){
-  nameOfFile+=`_random${percentageOfEmpty}`;
-  let multipleRun = int(random(1000));
-   nameOfFile += `_${multipleRun}`;
+  // name of file derived from legend
+  nameOfFile = `pepinno_Box${maxLinesWithBox}_Txt${maxLinesWithText}`;
+  if (percentageOfEmpty > 0) {
+    nameOfFile += `_random${percentageOfEmpty}`;
+    let multipleRun = int(random(1000));
+    nameOfFile += `_${multipleRun}`;
   }
   print(nameOfFile);
   textSize(16);
@@ -96,7 +117,7 @@ function draw_ref_x(kx, ky, middle_x, start_y) {
   scale(1, -1);
   textSize(25);
   strokeWeight(1);
-  stroke(crinola[ky]);
+  stroke(crinola[ky + 1]);
   fill(crinola[kx]);
   text(kx + 1, middle_x, 50 - start_y);
   pop();
@@ -105,9 +126,12 @@ function draw_ref_x(kx, ky, middle_x, start_y) {
 function draw_value(where_x, where_y, result) {
   push();
   scale(1, -1);
-  fill(0);
+  let lastDigit = (result % 10) - 1; // 0 to 9
+  if (lastDigit == -1) lastDigit = 9;
+  let color = crinola[lastDigit];
+  fill(color);
   stroke(0);
-  strokeWeight(1);
+  strokeWeight(0);
   textSize(25 + result / 2.5);
   // option random . In any case draw 1 box
   text(result, where_x, where_y);
@@ -124,37 +148,39 @@ function draw() {
   textAlign(CENTER, CENTER);
   noFill();
   stroke(255, 0, 0);
-  let tailleBase = 50;
-  let increment = 11.11;
+
   stroke(0);
 
-  // create boxes
+  // create boxes -------------------------------
   //Y goes from 0 to 10 with extension at each step
   let start_y = 0;
+  //let bout_x = tailleMax - steps[0] * 1.5;
+  let bout_y = tailleMax - steps[0] * 1.5; // à cause du middle_y
 
-  for (ky = 0; ky < biggerDigit; ky++) {
-    let size_y = tailleBase + ky * increment;
+  for (ky = 0; ky < 10; ky++) {
+    let size_y = steps[ky];
+
     stroke(crinola[ky]);
     let start_x = 0;
     // repères horizontaux
     {
-      let debut = start_y; // si on veut s'arrêter au début
       let middle_y = start_y + size_y / 2;
-      line(-25, middle_y, 980, middle_y);
+      line(-25, middle_y, tailleMax, middle_y);
       circle(-50, middle_y, 30);
       // draw value
       drawRef_y(ky, middle_y);
     }
-    // biggerDigit gives the upper digit to use
-    for (let kx = 0; kx < biggerDigit; kx++) {
-      let size_x = tailleBase + kx * increment;
+
+    //  gives the upper digit to use :all
+    for (let kx = 0; kx < 10; kx++) {
+      let size_x = steps[kx];
       // repères verticaux
       if (ky == 0) {
         let middle_x = start_x + size_x / 2;
         stroke(crinola[kx]);
-        let upY = start_y + kx * increment;
         strokeWeight(2);
-        line(middle_x, start_y - 30, middle_x, 980);
+        // decale circle on its center
+        line(middle_x, start_y - 30, middle_x, tailleMax);
         circle(middle_x, -50, 30);
         draw_ref_x(kx, ky, middle_x, start_y);
       }
@@ -168,8 +194,9 @@ function draw() {
       } else {
         // an ellipse proportional in x and y
         strokeWeight(2);
+        stroke(160)
         fill(240);
-        if (okVisu(kx, ky) {
+        if (okVisu(kx, ky)) {
           ellipse(
             start_x + size_x / 2,
             start_y + size_y / 2,
@@ -185,11 +212,12 @@ function draw() {
         if (int(random(100)) >= percentageOfEmpty || (kx == 0 && ky == 0)) {
           let where_x = start_x + size_x / 2;
           let where_y = -start_y - size_y / 2;
+
           draw_value(where_x, where_y, result);
         }
       }
       // next step in x
-      start_x += size_x;
+      start_x += steps[kx];
     }
     // next step in y
     start_y = start_y + size_y;
