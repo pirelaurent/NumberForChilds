@@ -19,16 +19,20 @@ wicked, squinting and strong, ready to jump,
 no too much big eyes, designed as the middle zero of 100 
 don't show web at all 
 """
-
+""" Une unique marguerite, en couleur , avec une seule feuille et de l'herbe au pied , façon cartoon
+         """
 data = {
     "model": "dall-e-3",
-    "prompt": 
-      """ Une unique marguerite, en couleur , avec une seule feuille et de l'herbe au pied , façon cartoon
-         """,
+    "prompt": """
+A fun, rounded alone spider, full visible in canvas and centered, designed in a cartoon manner for kids, colored with a soft palette
+wicked, squinting and strong, ready to jump,  
+no too much big eyes, no text at all,
+don't show web at all 
+""",
+      
     "n": 1,
     "size": "1024x1024"
 }
-print (headers);
 response = requests.post('https://api.openai.com/v1/images/generations', headers=headers, json=data)
 
 if response.status_code == 200:
