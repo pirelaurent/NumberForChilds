@@ -4,7 +4,7 @@ let percentageOfEmpty = 0;
 let maxLinesWithBox = 10;
 // maxLinesWithText : the number of lines on x and Y where text is drawn, otherwise empty.
 // maxLinesWithText should be equal or less than maxLinesWithBox to leavec empty boxes
-let maxLinesWithText = 10;
+let maxLinesWithText = 0;
 let nameOfFile;
 //
 let tailleBase = 50;
@@ -52,18 +52,17 @@ function preload() {
   // Charger l'image PNG
   imgSpider = loadImage("../../img/sympaSpider.png");
 }
-let maxX = 1400;
+let maxX = 1200;
 let maxY = 1400;
 
 function setup() {
   createCanvas(maxX, maxY);
   zero_x = 100;
-  zero_y = height - 400;
-
+  zero_y = height - 300;
+// precalculate progressive sizeq
   for (i = 0; i < 10; i++) {
     let oneStep = tailleBase + i * increment;
     steps.push(oneStep);
-    print(i, steps);
     tailleMax = tailleMax + oneStep;
   }
 }
@@ -101,18 +100,23 @@ function drawLegend() {
 }
 
 // due to reverse scale, text are in mirror, must be rectified before print
-function drawRef_y(ky, middle_y) {
+function draw_ref_y(ky, middle_y) {
+  //circle(-50, middle_y, 30);
+  //circle(tailleMax+25, middle_y, 30);
   push();
   scale(1, -1);
   textSize(25);
   strokeWeight(1);
   stroke(crinola[ky]);
   fill(crinola[ky]);
+
   text(ky + 1, -50, -middle_y);
+  text(ky + 1, tailleMax+35, -middle_y);
   pop();
 }
 
 function draw_ref_x(kx, ky, middle_x, start_y) {
+  //circle(middle_x, -50, 30);
   push();
   scale(1, -1);
   textSize(25);
@@ -120,6 +124,7 @@ function draw_ref_x(kx, ky, middle_x, start_y) {
   stroke(crinola[ky + 1]);
   fill(crinola[kx]);
   text(kx + 1, middle_x, 50 - start_y);
+  text(kx + 1, middle_x, -tailleMax-35);
   pop();
 }
 
@@ -165,10 +170,9 @@ function draw() {
     // repères horizontaux
     {
       let middle_y = start_y + size_y / 2;
-      line(-25, middle_y, tailleMax, middle_y);
-      circle(-50, middle_y, 30);
+      line(-25, middle_y, tailleMax+20, middle_y);
       // draw value
-      drawRef_y(ky, middle_y);
+      draw_ref_y(ky, middle_y);
     }
 
     //  gives the upper digit to use :all
@@ -180,8 +184,7 @@ function draw() {
         stroke(crinola[kx]);
         strokeWeight(2);
         // decale circle on its center
-        line(middle_x, start_y - 30, middle_x, tailleMax);
-        circle(middle_x, -50, 30);
+        line(middle_x, start_y - 30, middle_x, tailleMax+20);
         draw_ref_x(kx, ky, middle_x, start_y);
       }
 
