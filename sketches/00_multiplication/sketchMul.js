@@ -1,16 +1,27 @@
 // in the current list , a percentage of blanck holes. 0->none, 100-> all;
 let percentageOfEmpty = 0;
 // max visu : the number of lines on x and y with boxes, ie table of multiplication
-let maxLinesWithBox = 10;
+let maxLinesWithBox = 3;
 // maxLinesWithText : the number of lines on x and Y where text is drawn, otherwise empty.
 // maxLinesWithText should be equal or less than maxLinesWithBox to leavec empty boxes
-let maxLinesWithText = 0;
+let maxLinesWithText = maxLinesWithBox;
 let nameOfFile;
 //
 let tailleBase = 50;
 let increment = 11.11;
 let tailleMax = 0;
 let steps = [];
+
+function updateP5Values(newTableMax, newPourcentage) {
+  tableMax = parseInt(newTableMax);
+  maxLinesWithBox = tableMax;
+  maxLinesWithText = tableMax;
+
+  pourcentage = parseInt(newPourcentage);
+  percentageOfEmpty = pourcentage;
+
+  redraw();
+}
 
 function okVisu(kx, ky) {
   return kx + 1 <= maxLinesWithBox || ky + 1 <= maxLinesWithBox;
@@ -21,7 +32,6 @@ function okText(kx, ky) {
 
 let img;
 let crinola = [
-  
   "#c70039",
   "#ff5733",
   "#3cb44b",
@@ -53,13 +63,13 @@ function preload() {
   imgSpider = loadImage("../../img/sympaSpider.png");
 }
 let maxX = 1200;
-let maxY = 1400;
+let maxY = 1300;
 
 function setup() {
   createCanvas(maxX, maxY);
   zero_x = 100;
-  zero_y = height - 300;
-// precalculate progressive sizeq
+  zero_y = height - 200;
+  // precalculate progressive sizeq
   for (i = 0; i < 10; i++) {
     let oneStep = tailleBase + i * increment;
     steps.push(oneStep);
@@ -75,23 +85,24 @@ function drawLegend() {
   fill(200, 70, 50);
   text("x", 0, 0);
   translate(0, 0);
-  image(imgSpider, -20, 30, 120, 80);
+  //image(imgSpider, -20, 30, 120, 80);
   pop();
   push();
-  translate(0, 250);
+  translate(800, 100);
   stroke(0);
   strokeWeight(0);
   fill(0);
   let legend = ``;
-  legend += `maxLinesWithBox=${maxLinesWithBox} , maxLinesWithText=${maxLinesWithText}\n`;
-  legend += `randomEmpty=${percentageOfEmpty}%\n`;
-  legend += `© pep-inno-2024`;
+  legend += `Max=${maxLinesWithBox} `;
+  legend += `  Empty=${percentageOfEmpty}%\n`;
+  legend += `               © pep-inno-2024`;
   // name of file derived from legend
-  nameOfFile = `pepinno_Box${maxLinesWithBox}_Txt${maxLinesWithText}`;
-  if (percentageOfEmpty > 0) {
-    nameOfFile += `_random${percentageOfEmpty}`;
+  nameOfFile = `pepinno_max${maxLinesWithBox}`;
+  //if (percentageOfEmpty > 0)
+  {
+    nameOfFile += `_empty${percentageOfEmpty}`;
     let multipleRun = int(random(1000));
-    nameOfFile += `_${multipleRun}`;
+    nameOfFile += `_(${multipleRun})`;
   }
   print(nameOfFile);
   textSize(16);
@@ -111,7 +122,7 @@ function draw_ref_y(ky, middle_y) {
   fill(crinola[ky]);
 
   text(ky + 1, -50, -middle_y);
-  text(ky + 1, tailleMax+35, -middle_y);
+  text(ky + 1, tailleMax + 35, -middle_y);
   pop();
 }
 
@@ -124,7 +135,7 @@ function draw_ref_x(kx, ky, middle_x, start_y) {
   stroke(crinola[ky + 1]);
   fill(crinola[kx]);
   text(kx + 1, middle_x, 50 - start_y);
-  text(kx + 1, middle_x, -tailleMax-35);
+  text(kx + 1, middle_x, -tailleMax - 35);
   pop();
 }
 
@@ -170,7 +181,7 @@ function draw() {
     // repères horizontaux
     {
       let middle_y = start_y + size_y / 2;
-      line(-25, middle_y, tailleMax+20, middle_y);
+      line(-25, middle_y, tailleMax + 20, middle_y);
       // draw value
       draw_ref_y(ky, middle_y);
     }
@@ -184,7 +195,7 @@ function draw() {
         stroke(crinola[kx]);
         strokeWeight(2);
         // decale circle on its center
-        line(middle_x, start_y - 30, middle_x, tailleMax+20);
+        line(middle_x, start_y - 30, middle_x, tailleMax + 20);
         draw_ref_x(kx, ky, middle_x, start_y);
       }
 
@@ -197,7 +208,7 @@ function draw() {
       } else {
         // an ellipse proportional in x and y
         strokeWeight(2);
-        stroke(160)
+        stroke(160);
         fill(240);
         if (okVisu(kx, ky)) {
           ellipse(

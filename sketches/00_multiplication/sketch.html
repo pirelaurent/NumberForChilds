@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <script src="../../p5/p5.js"></script>
-  <link rel="stylesheet" type="text/css" href="../../css/default.css">
+  <link rel="stylesheet" type="text/css" href="../../css/default.css" />
   <script src="sketchMul.js"></script>
-
 </head>
 <body>
-  
+  <div>
+    <label for="tableMax">Table max (2-10) :</label>
+    <input
+      type="number"
+      id="tableMax"
+      name="tableMax"
+      min="2"
+      max="10"
+      value="3"
+    />
+
+    <label for="pourcentage">% de vide: </label>
+    <input
+      type="number"
+      id="pourcentage"
+      name="pourcentage"
+      min="0"
+      max="100"
+      value="0"
+    />
+
+    &nbsp;<button onclick="updateValues()"> Mettre à jour</button>
+  </div>
+
+  <script>
+    function updateValues() {
+      let tableMax = document.getElementById("tableMax").value;
+      let pourcentage = document.getElementById("pourcentage").value;
+      window.updateP5Values(tableMax, pourcentage);
+    }
+  </script>
 </body>
